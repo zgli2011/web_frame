@@ -1,0 +1,350 @@
+syntax = "proto3";
+
+package user;
+
+import "google/api/annotations.proto";
+import "protoc-gen-openapiv2/options/annotations.proto";
+
+option go_package = "./user";
+
+// 用户服务 - 提供完整的用户管理功能
+// @tag users
+// @description 用户管理相关接口
+service UserService {
+    option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_tag) = {
+        name: "users"
+        description: "用户管理相关接口"
+    };
+
+    // 创建用户
+    // @tags users
+    // @summary 创建新用户
+    // @description 创建一个新的用户账户，需要提供用户名和邮箱
+    rpc CreateUser(CreateUserRequest) returns (CreateUserResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/users"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "创建新用户"
+            description: "创建一个新的用户账户，需要提供用户名、邮箱和年龄信息"
+            tags: "users"
+            operation_id: "createUser"
+        };
+    }
+
+    // 获取用户信息
+    // @tags users
+    // @summary 获取用户详情
+    // @description 根据用户ID获取用户的详细信息
+    rpc GetUser(GetUserRequest) returns (GetUserResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/users/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "获取用户详情"
+            description: "根据用户ID获取用户的详细信息，包括基本资料和状态"
+            tags: "users"
+            operation_id: "getUser"
+        };
+    }
+
+    // 更新用户信息
+    // @tags users
+    // @summary 更新用户信息
+    // @description 更新指定用户的信息，如姓名、邮箱等
+    rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+        option (google.api.http) = {
+            put: "/api/v1/users/{id}"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "更新用户信息"
+            description: "更新指定用户的基本信息，支持部分字段更新"
+            tags: "users"
+            operation_id: "updateUser"
+        };
+    }
+
+    // 删除用户
+    // @tags users
+    // @summary 删除用户
+    // @description 软删除指定的用户账户
+    rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse) {
+        option (google.api.http) = {
+            delete: "/api/v1/users/{id}"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "删除用户"
+            description: "软删除指定的用户账户，用户数据会被标记为已删除状态"
+            tags: "users"
+            operation_id: "deleteUser"
+        };
+    }
+
+    // 列出用户
+    // @tags users
+    // @summary 用户列表
+    // @description 分页获取用户列表，支持搜索和过滤
+    rpc ListUsers(ListUsersRequest) returns (ListUsersResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/users"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "用户列表"
+            description: "分页获取用户列表，支持关键词搜索和排序功能"
+            tags: "users"
+            operation_id: "listUsers"
+        };
+    }
+
+    // 搜索用户
+    // @tags users,search
+    // @summary 搜索用户
+    // @description 根据关键词搜索用户
+    rpc SearchUsers(SearchUsersRequest) returns (SearchUsersResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/users/search"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "搜索用户"
+            description: "根据关键词在指定字段中搜索用户，支持模糊匹配"
+            tags: "users"
+            tags: "search"
+            operation_id: "searchUsers"
+        };
+    }
+
+    // 批量更新用户状态 (管理员接口)
+    // @tags admin
+    // @summary 批量操作用户
+    // @description 管理员专用接口，批量启用/禁用用户
+    rpc BatchUpdateUsers(BatchUpdateUsersRequest) returns (BatchUpdateUsersResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/admin/users/batch"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "批量操作用户"
+            description: "管理员专用接口，支持批量启用、禁用或删除用户账户"
+            tags: "admin"
+            operation_id: "batchUpdateUsers"
+        };
+    }
+
+    // 获取用户统计信息 (管理员接口)
+    // @tags admin
+    // @summary 用户统计
+    // @description 获取用户相关的统计信息
+    // @deprecated
+    rpc GetUserStats(GetUserStatsRequest) returns (GetUserStatsResponse) {
+        option (google.api.http) = {
+            get: "/api/v1/admin/users/stats"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "用户统计"
+            description: "获取用户相关的统计信息，包括总数、活跃用户等数据"
+            tags: "admin"
+            operation_id: "getUserStats"
+            deprecated: true
+        };
+        option deprecated = true;
+    }
+
+    // 上传用户头像
+    // @tags users,upload
+    // @summary 上传用户头像
+    // @description 上传用户头像图片
+    rpc UploadUserAvatar(UploadUserAvatarRequest) returns (UploadUserAvatarResponse) {
+        option (google.api.http) = {
+            post: "/api/v1/users/{user_id}/avatar"
+            body: "avatar_data"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "上传用户头像"
+            description: "上传用户头像图片，支持 JPEG 和 PNG 格式"
+            tags: "users"
+            tags: "upload"
+            operation_id: "uploadUserAvatar"
+        };
+    }
+
+    // 重置用户密码
+    // @tags users,security
+    // @summary 重置用户密码
+    // @description 重置用户登录密码
+    rpc ResetUserPassword(ResetUserPasswordRequest) returns (ResetUserPasswordResponse) {
+        option (google.api.http) = {
+            patch: "/api/v1/users/{user_id}/password"
+            body: "*"
+        };
+        option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+            summary: "重置用户密码"
+            description: "使用重置令牌重置用户的登录密码"
+            tags: "users"
+            tags: "security"
+            operation_id: "resetUserPassword"
+        };
+    }
+}
+
+// 创建用户请求
+message CreateUserRequest {
+    string name = 1;     // 用户姓名
+    string email = 2;    // 用户邮箱
+    int32 age = 3;       // 用户年龄
+    string phone = 4;    // 手机号码
+}
+
+// 创建用户响应
+message CreateUserResponse {
+    int64 id = 1;           // 用户ID
+    string name = 2;        // 用户姓名
+    string email = 3;       // 用户邮箱
+    int32 age = 4;          // 用户年龄
+    string phone = 5;       // 手机号码
+    string created_at = 6;  // 创建时间
+}
+
+// 获取用户请求
+message GetUserRequest {
+    int64 id = 1;  // 用户ID
+}
+
+// 获取用户响应
+message GetUserResponse {
+    int64 id = 1;           // 用户ID
+    string name = 2;        // 用户姓名
+    string email = 3;       // 用户邮箱
+    int32 age = 4;          // 用户年龄
+    string phone = 5;       // 手机号码
+    string created_at = 6;  // 创建时间
+    string updated_at = 7;  // 更新时间
+}
+
+// 更新用户请求
+message UpdateUserRequest {
+    int64 id = 1;        // 用户ID
+    string name = 2;     // 用户姓名
+    string email = 3;    // 用户邮箱
+    int32 age = 4;       // 用户年龄
+    string phone = 5;    // 手机号码
+}
+
+// 更新用户响应
+message UpdateUserResponse {
+    int64 id = 1;           // 用户ID
+    string name = 2;        // 用户姓名
+    string email = 3;       // 用户邮箱
+    int32 age = 4;          // 用户年龄
+    string phone = 5;       // 手机号码
+    string updated_at = 6;  // 更新时间
+}
+
+// 删除用户请求
+message DeleteUserRequest {
+    int64 id = 1;  // 用户ID
+}
+
+// 删除用户响应
+message DeleteUserResponse {
+    bool success = 1;      // 操作是否成功
+    string message = 2;    // 返回消息
+}
+
+// 列出用户请求
+message ListUsersRequest {
+    int32 page = 1;          // 页码
+    int32 page_size = 2;     // 页大小
+    string search = 3;       // 搜索关键词
+    string sort_by = 4;      // 排序字段
+    bool descending = 5;     // 是否降序
+}
+
+// 列出用户响应
+message ListUsersResponse {
+    repeated GetUserResponse users = 1;  // 用户列表
+    int32 total = 2;                     // 总数
+    int32 page = 3;                      // 当前页
+    int32 page_size = 4;                 // 页大小
+    int32 total_pages = 5;               // 总页数
+}
+
+// 搜索用户请求
+message SearchUsersRequest {
+    string keyword = 1;          // 搜索关键词
+    repeated string fields = 2;  // 搜索字段：name, email, phone
+    int32 limit = 3;             // 结果限制
+}
+
+// 搜索用户响应
+message SearchUsersResponse {
+    repeated GetUserResponse users = 1;  // 用户列表
+    int32 total = 2;                     // 总数
+    string query = 3;                    // 查询条件
+}
+
+// 批量更新用户请求
+message BatchUpdateUsersRequest {
+    repeated int64 user_ids = 1;  // 用户ID列表
+    string action = 2;            // 操作类型：enable, disable, delete, archive
+    string reason = 3;            // 操作原因
+}
+
+// 批量更新用户响应
+message BatchUpdateUsersResponse {
+    int32 affected_count = 1;      // 影响的用户数
+    bool success = 2;              // 操作是否成功
+    repeated string errors = 3;    // 错误信息
+}
+
+// 获取用户统计请求
+message GetUserStatsRequest {
+    string period = 1;      // 统计周期：daily, weekly, monthly, yearly
+    string start_date = 2;  // 开始日期
+    string end_date = 3;    // 结束日期
+}
+
+// 获取用户统计响应
+message GetUserStatsResponse {
+    int32 total_users = 1;              // 总用户数
+    int32 active_users = 2;             // 活跃用户数
+    int32 new_users = 3;                // 新用户数
+    int32 inactive_users = 4;           // 非活跃用户数
+    repeated DailyStats daily_stats = 5; // 每日统计
+}
+
+// 每日统计
+message DailyStats {
+    string date = 1;         // 日期
+    int32 new_users = 2;     // 新增用户数
+    int32 active_users = 3;  // 活跃用户数
+}
+
+// 上传头像请求
+message UploadUserAvatarRequest {
+    int64 user_id = 1;       // 用户ID
+    bytes avatar_data = 2;   // 头像数据
+    string content_type = 3; // 内容类型：image/jpeg, image/png
+}
+
+// 上传头像响应
+message UploadUserAvatarResponse {
+    bool success = 1;       // 操作是否成功
+    string avatar_url = 2;  // 头像URL
+    string message = 3;     // 返回消息
+}
+
+// 重置密码请求
+message ResetUserPasswordRequest {
+    int64 user_id = 1;        // 用户ID
+    string new_password = 2;  // 新密码
+    string reset_token = 3;   // 重置令牌
+}
+
+// 重置密码响应
+message ResetUserPasswordResponse {
+    bool success = 1;    // 操作是否成功
+    string message = 2;  // 返回消息
+}

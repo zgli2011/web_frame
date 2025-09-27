@@ -1,0 +1,62 @@
+app:
+  port: 8080
+  check_port: 9090
+  endpoints:
+    health: true
+    apis: true
+    metrics: true
+
+mysql:
+  default:
+    host: "localhost"
+    port: 3306
+    username: "root"
+    password: "password"
+    database: "test_db"
+    max_idle_conns: 10
+    max_open_conns: 100
+    conn_max_lifetime: 3600
+
+  user_db:
+    host: "localhost"
+    port: 3306
+    username: "user"
+    password: "user_pass"
+    database: "user_database"
+    max_idle_conns: 5
+    max_open_conns: 50
+    conn_max_lifetime: 1800
+
+redis:
+  default:
+    host: "localhost"
+    port: 6379
+    password: ""
+    db: 0
+    pool_size: 10
+    min_idle_conns: 2
+    max_conn_age: 3600
+    pool_timeout: 4
+    idle_timeout: 300
+    idle_check_freq: 60
+
+  cache:
+    host: "localhost"
+    port: 6379
+    password: ""
+    db: 1
+    pool_size: 5
+    min_idle_conns: 1
+    max_conn_age: 1800
+    pool_timeout: 4
+    idle_timeout: 300
+    idle_check_freq: 60
+
+log:
+  level: "INFO"
+  output: "both"
+  format: "json"
+  file_path: "./logs"
+  file_name: "app.log"
+  max_size: 100
+  max_backups: 7

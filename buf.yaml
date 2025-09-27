@@ -1,0 +1,12 @@
+version: v2
+modules:
+  - path: .
+    excludes:
+      - proto/plugins
+      - example
+lint:
+  use:
+    - BASIC
+breaking:
+  use:
+    - FILE

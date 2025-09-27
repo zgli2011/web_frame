@@ -1,0 +1,15 @@
+version: v2
+clean: true
+plugins:
+  - local: proto/plugins/web-registry
+    out: .
+    opt:
+      - paths=source_relative
+  - remote: buf.build/protocolbuffers/go
+    out: .
+    opt:
+      - paths=source_relative
+  - remote: buf.build/grpc-ecosystem/gateway
+    out: .
+    opt:
+      - paths=source_relative
